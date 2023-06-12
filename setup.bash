@@ -18,9 +18,14 @@ ssh -i "private_key.pem" ec2-user@$1 << EOF
     sleep 5
     sudo chown -R minecraft:minecraft /opt/minecraft/
     sed -i 's/eula=false/eula=true/' /opt/minecraft/server/eula.txt
+    if pgrep -f server.jar > /dev/null; then
+        # Minecraft server process found
+        echo "Existing Minecraft server process found. Killing the process..."
+        pkill -f server.jar
+    else
+        echo "No existing Minecraft server process found."
+    fi
     java -Xmx1024M -Xms1024M -jar server.jar nogui
-
-    
 EOF
 
 echo "Done!"
